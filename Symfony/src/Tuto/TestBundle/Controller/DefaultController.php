@@ -26,6 +26,8 @@ class DefaultController extends Controller {
         // to get the value of the checkbox
         $checked_woman = $this->get('request')->request->get('woman_name');
         $checked_bechdel = $this->get('request')->request->get('button_bechdel');
+        $checked_direct = $this->get('request')->request->get('woman_write');
+        $checked_write = $this->get('request')->request->get('woman_direct');
         if (($checked_woman) && ($checked_bechdel)) {
             $query = $em->createQuery(
                     'SELECT p
@@ -54,6 +56,22 @@ class DefaultController extends Controller {
             );
 
             $products = $query->getResult();
+            return $this->render('TutoTestBundle:Default:resultat.html.twig', array(
+                        'products' => $products));
+        } else if ($checked_direct) {
+            $e = $this->getDoctrine()->getManager();
+            $qb = $e->createQueryBuilder();
+            $qb
+                    ->select('f.name')
+                    ->from('Tuto\TestBundle\Entity\films', 'f')
+                    ->leftJoin('f.idFilm', 'wf')
+                    ->leftJoin('wf.idwriter', 'w')
+                    ->where('w.gender = "a"');
+
+            $query = $qb->getQuery();
+            $products = $query->getResult();
+
+
             return $this->render('TutoTestBundle:Default:resultat.html.twig', array(
                         'products' => $products));
 //..
