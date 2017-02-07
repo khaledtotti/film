@@ -1,8 +1,12 @@
 {% extends "TutoTestBundle::base.html.twig" %}
 
 {% block filters %}
-    {% for a in products %}
-        <li>{{ a.title }}</li>
-        {% endfor %}
-</ul>
+    <p>Looking to watch a movie respectful with women representation?</p>
+
+
+    <ul class="results">
+        {% for a in products %}
+            <li>{{ a.title }}</li>
+            {% endfor %}
+    </ul>
 {% endblock %}
