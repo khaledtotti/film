@@ -34,7 +34,7 @@ class writerfilm {
 
     /**
 
-     * @ORM\ManyToOne(targetEntity="Films", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="films", inversedBy="id")
      * @ORM\JoinColumn(name="idfilm", referencedColumnName="id")
      */
     private $idFilm;

@@ -6,15 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller {
 
-    public function testAction() {
-        $film = $this->getDoctrine()
-                ->getRepository('TutoTestBundle:films')
-                ->findall();
-
-        return $this->render('TutoTestBundle:Default:filmview.html.twig', array(
-                    'film' => $film));
-    }
-
     public function filtersAction() {
 
         return $this->render('TutoTestBundle:Default:filters.html.twig');
@@ -26,8 +17,8 @@ class DefaultController extends Controller {
         // to get the value of the checkbox
         $checked_woman = $this->get('request')->request->get('woman_name');
         $checked_bechdel = $this->get('request')->request->get('button_bechdel');
-        $checked_direct = $this->get('request')->request->get('woman_write');
-        $checked_write = $this->get('request')->request->get('woman_direct');
+        $checked_writer = $this->get('request')->request->get('woman_write');
+        $checked_director = $this->get('request')->request->get('woman_direct');
         if (($checked_woman) && ($checked_bechdel)) {
             $query = $em->createQuery(
                     'SELECT p
@@ -58,24 +49,42 @@ class DefaultController extends Controller {
             $products = $query->getResult();
             return $this->render('TutoTestBundle:Default:resultat.html.twig', array(
                         'products' => $products));
-        } else if ($checked_direct) {
-            $e = $this->getDoctrine()->getManager();
-            $qb = $e->createQueryBuilder();
-            $qb
-                    ->select('f.name')
-                    ->from('Tuto\TestBundle\Entity\films', 'f')
-                    ->leftJoin('f.idFilm', 'wf')
-                    ->leftJoin('wf.idwriter', 'w')
-                    ->where('w.gender = "a"');
+        } else if ($checked_writer) {
 
-            $query = $qb->getQuery();
+            $query = $em
+                    ->createQuery("select f
+                        from TutoTestBundle:films f
+                        , TutoTestBundle:writerfilm wf
+                         , TutoTestBundle:writers w
+
+                        where   f.id=wf.idFilm and w.id=wf.idWriter and w.gender = 'W' ORDER BY f.title
+          ");
+
             $products = $query->getResult();
-
-
             return $this->render('TutoTestBundle:Default:resultat.html.twig', array(
                         'products' => $products));
+        } else if ($checked_director) {
+
+            $query = $em
+                    ->createQuery("select f
+                        from TutoTestBundle:films f
+                        , TutoTestBundle:directorfilm df
+                         , TutoTestBundle:Directors d
+
+                        where   f.id=df.filmId and d.id=df.directorId and d.gender = 'W'
+
+          ");
+
+            $products = $query->getResult();
+            return $this->render('TutoTestBundle:Default:resultat.html.twig', array(
+                        'products' => $products));
+        }
+
+
+
+
 //..
-        } else {
+        else {
             return $this->render('TutoTestBundle:Default:filters.html.twig')
             ;
         }
